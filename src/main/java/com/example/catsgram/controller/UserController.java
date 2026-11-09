@@ -4,6 +4,8 @@ import com.example.catsgram.exception.InvalidEmailException;
 import com.example.catsgram.exception.UserAlreadyExistException;
 import com.example.catsgram.exception.UserNotFoundException;
 import com.example.catsgram.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.Map;
 @RequestMapping("/user")
 public class UserController {
     private final Map<String, User> users = new HashMap<>();
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping // получить всех пользователей
     public List<User> findAll(){
@@ -42,6 +45,8 @@ public class UserController {
         if (users.containsKey(email)) {
             throw new UserAlreadyExistException("Пользователь с email " + email + " уже существует");
         }
+
+        log.info("Добавлен пользователь: {}", user.getNickname());
 
         // 3. Сохранение
         users.put(email, user);
