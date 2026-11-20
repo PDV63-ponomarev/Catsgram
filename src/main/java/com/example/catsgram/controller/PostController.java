@@ -3,6 +3,7 @@ package com.example.catsgram.controller;
 import com.example.catsgram.model.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,20 +14,20 @@ import java.util.List;
 
 @RestController
 public class PostController {
+    private final  PostService postService;
 
-    private List<Post> posts = new ArrayList<>();
-    private static final Logger log = LoggerFactory.getLogger(PostController.class);
+    @Autowired
+    public PostController(PostService postService){
+        this.postService = postService;
+    }
 
     @GetMapping("/posts")
     public List<Post> findAll(){
-        log.debug("Текущее количество постов: {}", posts.size());
-        return posts;
+        return postService.findAll();
     }
 
     @PostMapping(value = "/post")
     public Post create(@RequestBody Post post){
-        log.info("Добавлен пост: {}", post);
-        posts.add(post);
-        return post;
+        return postService.create(post);
     }
 }
