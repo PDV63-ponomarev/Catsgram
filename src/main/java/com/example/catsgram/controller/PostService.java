@@ -3,13 +3,14 @@ package com.example.catsgram.controller;
 import com.example.catsgram.model.Post;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class PostService {
@@ -25,5 +26,11 @@ public class PostService {
         log.info("Добавлен пост: {}", post);
         posts.add(post);
         return post;
+    }
+
+    public Optional<Post> findById(@PathVariable int postId){
+        return posts.stream()
+                .filter(x -> x.getId() == postId)
+                .findFirst();
     }
 }

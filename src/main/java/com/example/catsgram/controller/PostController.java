@@ -1,16 +1,12 @@
 package com.example.catsgram.controller;
 
 import com.example.catsgram.model.Post;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class PostController {
@@ -29,5 +25,10 @@ public class PostController {
     @PostMapping(value = "/post")
     public Post create(@RequestBody Post post){
         return postService.create(post);
+    }
+
+    @GetMapping("/posts/{postId}")
+    public Optional<Post> findById(@PathVariable int postId){
+        return postService.findById(postId);
     }
 }
