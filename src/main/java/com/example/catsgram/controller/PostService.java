@@ -2,15 +2,18 @@ package com.example.catsgram.controller;
 
 import com.example.catsgram.model.Post;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
 public class PostService {
@@ -33,4 +36,11 @@ public class PostService {
                 .filter(x -> x.getId() == postId)
                 .findFirst();
     }
+
+//    public List<Post> searchPosts(@RequestBody String author,
+//                                  @RequestParam
+//                                  @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate date){
+//        System.out.println("Ищем посты пользователя с именем " + author +
+//                " опубликованные " + date);
+//    }
 }

@@ -31,4 +31,9 @@ public class PostController {
     public Optional<Post> findById(@PathVariable int postId){
         return postService.findById(postId);
     }
+
+//    @GetMapping("/posts/search")
+//    public List<Post> searchPosts(@RequestBody String author){
+//        return postService.searchPosts(author);
+//    }
 }
