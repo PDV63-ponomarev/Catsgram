@@ -18,22 +18,20 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public List<Post> findAll(){
-        return postService.findAll();
+    public List<Post> findAll(@RequestParam(defaultValue = "10") int size,
+                              @RequestParam(defaultValue = "DESC") String sort,
+                              @RequestParam(defaultValue = "0") int from){
+        return postService.findAll(size, sort, from);
     }
 
-    @PostMapping(value = "/post")
+    @PostMapping("/post")
     public Post create(@RequestBody Post post){
         return postService.create(post);
     }
 
-    @GetMapping("/posts/{postId}")
+    @GetMapping("(/post/{postId}")
     public Optional<Post> findById(@PathVariable int postId){
         return postService.findById(postId);
     }
 
-//    @GetMapping("/posts/search")
-//    public List<Post> searchPosts(@RequestBody String author){
-//        return postService.searchPosts(author);
-//    }
 }
