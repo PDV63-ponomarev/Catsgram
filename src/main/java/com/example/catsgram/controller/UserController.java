@@ -1,23 +1,18 @@
 package com.example.catsgram.controller;
 
-import com.example.catsgram.exception.InvalidEmailException;
-import com.example.catsgram.exception.UserAlreadyExistException;
-import com.example.catsgram.exception.UserNotFoundException;
+import com.example.catsgram.model.Post;
 import com.example.catsgram.model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
     private final UserService userService;
 
     @Autowired
@@ -31,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping("/{email}")
-    public User findByEmail(@PathVariable String email) {
+    public Optional<User> findByEmail(@PathVariable String email) {
         return userService.findByEmail(email);
     }
 

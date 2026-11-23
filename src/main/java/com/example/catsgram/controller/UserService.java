@@ -9,27 +9,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class UserService {
-    private final Map<String, User> users = new HashMap<>();
+
+    private List<User> users = new ArrayList<>();
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     public List<User> findAll(){
-        return new ArrayList<>(users.values());
+        log.debug("Текущее количество пользователей: {}", users.size());
+        return users;
     }
 
-    public User findByEmail(@PathVariable String email) {
-        User user = users.get(email);
-        if (user == null) {
-            throw new UserNotFoundException("Пользователь не найден: " + email);
-        }
-        return user;
+    public Optional<User> findByEmail(@PathVariable String email) {
+        return users.stream()
+                .filter(x -> x.getEmail().equals(email))
+                .findFirst();
     }
+
 
     public User create(@RequestBody User user){
         String email = user.getEmail();
@@ -37,26 +35,28 @@ public class UserService {
             throw new InvalidEmailException("Email не может быть пустым");
         }
 
-        if (users.containsKey(email)) {
+        if  (users.stream().anyMatch(x -> email.equalsIgnoreCase(x.getEmail()))) {
             throw new UserAlreadyExistException("Пользователь с email " + email + " уже существует");
         }
 
         log.info("Добавлен пользователь: {}", user.getNickname());
 
-        users.put(email, user);
+        users.add(user);
         return user;
     }
 
     public User update(@PathVariable String email, @RequestBody User user) {
-        if (!users.containsKey(email)) {
+        if  (users.stream().noneMatch(x -> email.equalsIgnoreCase(x.getEmail()))) {
             throw new UserNotFoundException("Пользователь не найден: " + email);
         }
+
         // при смене email — проверяем уникальность нового
-        if (!email.equals(user.getEmail()) && users.containsKey(user.getEmail())) {
+        if  (users.stream().anyMatch(x -> email.equalsIgnoreCase(x.getEmail()))) {
             throw new UserAlreadyExistException("Email уже существует: " + user.getEmail());
         }
+
         users.remove(email);
-        users.put(user.getEmail(), user);
+        users.add(user);
         return user;
     }
 
