@@ -10,6 +10,18 @@ import java.util.Map;
 @RestControllerAdvice
 public class ErrorHandler {
 
+    @ExceptionHandler(PostNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND) // 404
+    public Map<String, String> handleNotFoundPost(PostNotFoundException e) {
+        return Map.of("error", e.getMessage());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND) // 404
+    public Map<String, String> handleNotFoundUser(UserNotFoundException e) {
+        return Map.of("error", e.getMessage());
+    }
+
     @ExceptionHandler(UserAlreadyExistException.class)
     @ResponseStatus(HttpStatus.CONFLICT) // 409
     public Map<String, String> handleUserExists(UserAlreadyExistException e) {
@@ -21,4 +33,17 @@ public class ErrorHandler {
     public Map<String, String> handleInvalidEmail(InvalidEmailException e) {
         return Map.of("error", e.getMessage());
     }
+
+    @ExceptionHandler(IncorrectParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // 400
+    public Map<String, String> handleIncorrectParameter(String message) {
+        return Map.of("error", "Ошибка с полем: " + message);
+    }
+
+    @ExceptionHandler(Throwable.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
+    public String throwable() {
+        return "Произошла непредвиденная ошибка";
+    }
+
 }

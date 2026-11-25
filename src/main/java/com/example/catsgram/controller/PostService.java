@@ -25,12 +25,12 @@ public class PostService {
 
     // http://localhost:8080/posts?size=10&sort=ASC&from=0
     // показать 10 постов, начать с начала (старых), с первого поста
-    public List<Post> findAll(int size, String sort, int from){
+    public List<Post> findAll(int size, String sort, int page){
         // size - сколько постов показать, размер
         // sort - сортировка с начала или конца
-        // from - с какого поста начать, сколько пропустить
+        // page - страница начала (size постов на 1 страницу)
         log.debug("Запрос на показ {} постов, отсортированных {}, начиная с {}",
-                size, sort, from);
+                size, sort, page);
 
         // создания компратора (правила сортировки), по умолчанию от старых к новым
         Comparator<Post> comparator = Comparator.comparing(Post::getCreationDate);
@@ -40,9 +40,11 @@ public class PostService {
             comparator = comparator.reversed();
         }
 
+        int offset = page * size;
+
         return posts.stream()
                 .sorted(comparator) // сортировка
-                .skip(from)   // пропускаем "from" постов
+                .skip(offset)   // пропускаем "from" постов
                 .limit(size)  // берем "size" постов
                 .collect(Collectors.toList()); // сборка обратно в список
     }
@@ -54,6 +56,7 @@ public class PostService {
     }
 
     public Optional<Post> findById(@PathVariable int postId){
+
         return posts.stream()
                 .filter(x -> x.getId() == postId)
                 .findFirst();
