@@ -25,14 +25,14 @@ public class UserController {
         return userService.findAll();
     }
 
-    @GetMapping("/{email}")
-    public Optional<User> findByEmail(@PathVariable String email) {
-        return userService.findByEmail(email);
-    }
-
     @PostMapping // создание пользователя
     public User create(@RequestBody User user){
         return  userService.create(user);
+    }
+
+    @GetMapping("/{email}") //поиск пользователя по почте
+    public User findByEmail(@PathVariable String email) {
+        return userService.findByEmail(email);
     }
 
     @PutMapping("/{email}")  //изменение почты у пользователя

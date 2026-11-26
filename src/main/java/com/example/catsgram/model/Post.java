@@ -8,9 +8,7 @@ public class Post {
 
     private Integer id;
     private final String author; // автор
-
     private Instant creationDate; //дата создания
-
     private String description; // описание
     private String photoUrl; // url фотографии
 

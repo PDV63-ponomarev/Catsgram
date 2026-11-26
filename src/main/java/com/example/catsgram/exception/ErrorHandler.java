@@ -1,14 +1,18 @@
 package com.example.catsgram.exception;
 
+import com.example.catsgram.controller.UserController;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Map;
+import org.slf4j.Logger;
 
 @RestControllerAdvice
 public class ErrorHandler {
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     @ExceptionHandler(PostNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND) // 404
@@ -42,7 +46,8 @@ public class ErrorHandler {
 
     @ExceptionHandler(Throwable.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) // 500
-    public String throwable() {
+    public String throwable(Throwable ex) {
+        log.error("Непредвиденная ошибка", ex);
         return "Произошла непредвиденная ошибка";
     }
 

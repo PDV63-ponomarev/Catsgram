@@ -1,6 +1,7 @@
 package com.example.catsgram.controller;
 
 import com.example.catsgram.exception.InvalidEmailException;
+import com.example.catsgram.exception.PostNotFoundException;
 import com.example.catsgram.exception.UserAlreadyExistException;
 import com.example.catsgram.exception.UserNotFoundException;
 import com.example.catsgram.model.User;
@@ -22,14 +23,21 @@ public class UserService {
         return users;
     }
 
-    public Optional<User> findByEmail(@PathVariable String email) {
-        return users.stream()
+    public User findByEmail(String email) {
+        Optional<User> usertOpt = users.stream()
                 .filter(x -> x.getEmail().equals(email))
                 .findFirst();
+
+        if (usertOpt.isEmpty()) {
+            String message = "Не найден пост с ID: " + email;
+            throw new PostNotFoundException(message);
+        }
+
+        return usertOpt.get();
     }
 
 
-    public User create(@RequestBody User user){
+    public User create(User user){
         String email = user.getEmail();
         if (email == null || email.isBlank()) {
             throw new InvalidEmailException("Email не может быть пустым");
@@ -45,22 +53,37 @@ public class UserService {
         return user;
     }
 
-    public User update(@PathVariable String email, @RequestBody User user) {
-        if  (users.stream().noneMatch(x -> email.equalsIgnoreCase(x.getEmail()))) {
-            throw new UserNotFoundException("Пользователь не найден: " + email);
+    public User update(String email, User user) {
+        Optional<User> userOpt = users.stream()
+                .filter(x -> email.equalsIgnoreCase(x.getEmail()))
+                .findFirst();
+
+        if (userOpt.isEmpty()) {
+            String message = "Пользователь не найден: " + email;
+            throw new UserNotFoundException(message);
         }
 
-        // при смене email — проверяем уникальность нового
-        if  (users.stream().anyMatch(x -> email.equalsIgnoreCase(x.getEmail()))) {
-            throw new UserAlreadyExistException("Email уже существует: " + user.getEmail());
+        // если новый email отличается от старого, тогда проверять занятость
+        if (!email.equalsIgnoreCase(user.getEmail())
+                && users.stream().anyMatch(x -> user.getEmail().equalsIgnoreCase(x.getEmail()))) {
+            throw new UserAlreadyExistException("Email уже занят: " + user.getEmail());
         }
 
-        users.remove(email);
+        users.remove(userOpt.get());
         users.add(user);
         return user;
     }
 
-    public void delete(@PathVariable String email) {
-        users.remove(email);
+    public void delete(String email) {
+        Optional<User> userOpt = users.stream()
+                .filter(x -> email.equalsIgnoreCase(x.getEmail()))
+                .findFirst();
+
+        if (userOpt.isEmpty()) {
+            String message = "Пользователь не найден: " + email;
+            throw new UserNotFoundException(message);
+        }
+
+        users.remove(userOpt.get());
     }
 }
